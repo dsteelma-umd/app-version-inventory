@@ -10,5 +10,5 @@ class EnhancedJSONEncoder(json.JSONEncoder):
                 return dataclasses.asdict(o)
             return super().default(o)
 
-def format(applications: list[Application]):
+def format(applications: list[Application]) -> str:
     return json.dumps(applications, cls=EnhancedJSONEncoder, indent=4)

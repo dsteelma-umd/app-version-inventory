@@ -5,10 +5,17 @@ def format(applications: list[Application]):
     return format_applications(applications)
 
 def format_applications(applications: list[Application]) -> str:
-    str =""
+    str = ""
+    first = True
     for application in applications:
-        str += f"{format_application(application)}\n"
-        str += "------------"
+        if first:
+            first = False
+        else:
+            str += "------------\n"
+
+
+        str += f"{application.name}\n"
+        str += f"{format_application(application)}"
     return str
 
 def format_application(application: Application) -> str:

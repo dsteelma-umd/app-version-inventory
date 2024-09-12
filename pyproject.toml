@@ -2,6 +2,7 @@
 name = "app_version_inventory"
 version = "1.0.0-dev"
 dependencies = [
+    "click",
     "kubernetes",
     "pyyaml"
 ]

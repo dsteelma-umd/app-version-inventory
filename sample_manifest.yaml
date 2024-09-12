@@ -1,9 +1,10 @@
 application:
     name: "DRUM"
-    inventory:
+    dependencies:
         - name: "Tomcat"
           selector: "app=drum-app"
           container: "drum"
+          parser: "tomcat"
           exec:
             - "/bin/sh"
             - "-c"
@@ -11,12 +12,14 @@ application:
         - name: "Java"
           selector: "app=drum-app"
           container: "drum"
+          parser: "java"
           exec:
             - "/bin/sh"
             - "-c"
             - "java -version"
         - name: "Node"
           selector: "app=drum-angular"
+          parser: "node"
           exec:
             - "/bin/sh"
             - "-c"
@@ -31,24 +34,25 @@ application:
 ---
 application:
     name: "BTAA Reciprocal Borrowing"
-    inventory:
+    dependencies:
       - name: "Apache"
         selector: "app=borrow-app"
+        parser: "apache"
         exec:
             - "/bin/sh"
             - "-c"
             - "httpd -v"
       - name: "Rails"
         selector: "app=borrow-app"
+        parser: "rails"
         exec:
             - "/bin/sh"
             - "-c"
             - "cd /apps/borrow/reciprocal-borrowing && bundle exec rails --version"
       - name: "Shibboleth"
         selector: "app=borrow-app"
+        parser: "shibboleth_sp"
         exec:
             - "/bin/sh"
             - "-c"
             - "/usr/sbin/shibd -v"
-
-

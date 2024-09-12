@@ -19,7 +19,7 @@
     "ghcr.io/devcontainers/features/git:1": {
         "version": "latest",
         "ppa": "false"
-    }
+    },
 },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -47,6 +47,12 @@
         "python.defaultInterpreterPath": "/usr/local/bin/python"
       }
     }
-  }
+  },
+
+  // Mount ".kube" directory from user's home directory, so Kubernetes
+  // credentials will be available in the container.
+  "mounts": [
+      "source=${localEnv:HOME}/.kube,target=/home/vscode/.kube,type=bind,consistency=cached"
+  ]
 }
 

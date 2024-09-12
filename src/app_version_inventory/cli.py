@@ -1,4 +1,5 @@
 # from dataclasses import dataclass
+import click
 from importlib import import_module
 from kubernetes import client, config
 from kubernetes.stream import stream
@@ -60,24 +61,50 @@ def load_parsers():
         #     command_modules[name] = module
     return parser_modules
 
-
-
-
-def main():
+@click.command()
+@click.option('--namespace',
+              required=True,
+              help='The Kubernetes namespace to query')
+@click.option('--manifest',
+              required=True,
+              type=click.Path(
+                  exists=True,
+                  file_okay=True,
+                  dir_okay=False,
+              ),
+              help='The application version inventory manifest file')
+@click.option('--kube-config',
+              default=None,
+              type=click.Path(
+                  exists=True,
+                  file_okay=True,
+                  dir_okay=False
+              ),
+              help='The ".kube/config" configuration directory')
+@click.option('--output-format',
+              default='json',
+              type=click.Choice(
+                   ['json', 'text'],
+                   case_sensitive=False),
+              help='The ".kube/config" configuration directory')
+def main(namespace: str, manifest: str, kube_config: str, output_format):
 
     # -------------
 
     # Configs can be set in Configuration class directly or using helper utility
-    config.load_kube_config(config_file=".kube/config")
+    if kube_config:
+      config.load_kube_config(config_file=kube_config)
+    else:
+        config.load_kube_config()
 
     v1 = client.CoreV1Api()
 
-    namespace = "test"
+#    namespace = "test"
 
     formatter_modules = load_formatters()
     parser_modules = load_parsers()
 
-    manifest_filename = "sample_manifest.yaml"
+    manifest_filename = manifest
     # ---------------
 
     with open(manifest_filename, 'r') as file:
@@ -85,20 +112,20 @@ def main():
 
         applications = []
         for manifest in manifests:
-            print(f"Name: {manifest['application']['name']}")
-            inventories = manifest['application']['inventory']
+            # print(f"Name: {manifest['application']['name']}")
+            dependencies = manifest['application']['dependencies']
             application = Application(name=manifest['application']['name'], dependencies=[])
             applications.append(application)
 
-            for inventory in inventories:
-                dependency_name = inventory['name']
-                pod_selector = inventory['selector']
-                container = inventory.get('container', None)
-                parser_name = inventory.get('parser', 'identity')
-                exec_cmd = inventory['exec']
-                print(f"\t{dependency_name}")
-                print(f"\t\t{pod_selector}")
-                print(f"\t\t{exec_cmd}")
+            for dependency in dependencies:
+                dependency_name = dependency['name']
+                pod_selector = dependency['selector']
+                container = dependency.get('container', None)
+                parser_name = dependency.get('parser', 'identity')
+                exec_cmd = dependency['exec']
+                # print(f"\t{dependency_name}")
+                # print(f"\t\t{pod_selector}")
+                # print(f"\t\t{exec_cmd}")
 
 
                 ret = v1.list_namespaced_pod(namespace=namespace, label_selector=pod_selector)
@@ -106,7 +133,7 @@ def main():
                 if pods:
                   first_pod = ret.items[0]
                   pod_name = first_pod.metadata.name
-                  print(f"Pod Name: {pod_name}")
+                  # print(f"Pod Name: {pod_name}")
 
                   resp = stream(v1.connect_get_namespaced_pod_exec,
                                   pod_name,
@@ -121,15 +148,18 @@ def main():
 
                   dependency = Dependency(name=dependency_name, version=parsed_response)
                   application.dependencies.append(dependency)
-                  print(f"Response: {dependency}")
+                  # print(f"Response: {dependency}")
 
-    print("============")
-    print(f"applications: {applications}")
-    print("============")
-    formatter_name = "text"
-    formatter_module = formatter_modules[formatter_name]
-    print(formatter_module.format(applications))
-    print("============")
-    formatter_name = "json"
-    formatter_module = formatter_modules[formatter_name]
+    # print("============")
+    # print(f"applications: {applications}")
+    # print("============")
+    # formatter_name = "text"
+    # formatter_module = formatter_modules[formatter_name]
+    # print(formatter_module.format(applications))
+    # print("============")
+    # formatter_name = "json"
+    # formatter_module = formatter_modules[formatter_name]
+    # print(formatter_module.format(applications))
+
+    formatter_module = formatter_modules[output_format]
     print(formatter_module.format(applications))
