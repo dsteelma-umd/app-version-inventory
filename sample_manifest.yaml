@@ -1,0 +1,54 @@
+application:
+    name: "DRUM"
+    inventory:
+        - name: "Tomcat"
+          selector: "app=drum-app"
+          container: "drum"
+          exec:
+            - "/bin/sh"
+            - "-c"
+            - "/usr/local/tomcat/bin/version.sh"
+        - name: "Java"
+          selector: "app=drum-app"
+          container: "drum"
+          exec:
+            - "/bin/sh"
+            - "-c"
+            - "java -version"
+        - name: "Node"
+          selector: "app=drum-angular"
+          exec:
+            - "/bin/sh"
+            - "-c"
+            - "node --version"
+        - name: "Postgres"
+          selector: "app=drum-db"
+          parser: "postgres"
+          exec:
+            - "/bin/sh"
+            - "-c"
+            - "psql --version"
+---
+application:
+    name: "BTAA Reciprocal Borrowing"
+    inventory:
+      - name: "Apache"
+        selector: "app=borrow-app"
+        exec:
+            - "/bin/sh"
+            - "-c"
+            - "httpd -v"
+      - name: "Rails"
+        selector: "app=borrow-app"
+        exec:
+            - "/bin/sh"
+            - "-c"
+            - "cd /apps/borrow/reciprocal-borrowing && bundle exec rails --version"
+      - name: "Shibboleth"
+        selector: "app=borrow-app"
+        exec:
+            - "/bin/sh"
+            - "-c"
+            - "/usr/sbin/shibd -v"
+
+

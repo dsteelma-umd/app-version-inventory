@@ -1,0 +1,20 @@
+[project]
+name = "app_version_inventory"
+version = "1.0.0-dev"
+dependencies = [
+    "kubernetes",
+    "pyyaml"
+]
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+dev = [
+     "ruff"
+]
+test = [
+    "pytest",
+    "pytest-cov"
+]
+
+[project.scripts]
+app-version-inventory = "app_version_inventory.cli:main"

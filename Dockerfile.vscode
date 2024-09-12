@@ -1,0 +1,10 @@
+# Pull base image
+FROM python:3.12.6
+
+# Install git, vim
+RUN apt-get update && \
+    apt-get install -y git vim && \
+    apt-get clean
+
+# Set vim as the default editor for Git
+ENV GIT_EDITOR=vim
