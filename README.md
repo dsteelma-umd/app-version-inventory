@@ -122,7 +122,9 @@ Parsers are in the "parsers" module. The following parsers are available:
 * mysql - Parses MySQL version
 * node - Parses Node version
 * postgres - Parses Postgres version
+* python - Parses Python version
 * rails - Parses Ruby on Rails version
+* redis - Parses Redis version
 * shibboleth_sp - Parses Shibboleth SP version
 * solr - Parses Solr version
 * tomcat - Parses Apache Tomcat version
